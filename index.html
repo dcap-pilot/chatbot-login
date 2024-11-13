@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DCAP Customer Support - Welcome</title>
     <link href="./app.min.css" rel="stylesheet">
+
+    <!-- Cache-Control meta tags to prevent caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <style>
         .landing-container {
             text-align: center;
@@ -217,6 +223,10 @@
 
         function closeModal() {
             document.querySelectorAll(".modal").forEach(modal => modal.style.display = "none");
+            
+            // Clear input fields on modal close to ensure fresh validation on each attempt
+            document.getElementById("plateNumber").value = "";
+            document.getElementById("lastFourNRIC").value = "";
         }
     </script>
 </body>
