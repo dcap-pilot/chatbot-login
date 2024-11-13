@@ -206,21 +206,27 @@
 
     <script>
         function validateInfo() {
-            const plateNumber = document.getElementById("plateNumber").value;
-            const lastFourNRIC = document.getElementById("lastFourNRIC").value;
-            
+            let plateNumber = document.getElementById("plateNumber").value.trim().toUpperCase();
+            let lastFourNRIC = document.getElementById("lastFourNRIC").value.trim();
+    
+            // Debugging: log the values
+            console.log("Plate Number:", plateNumber);
+            console.log("Last Four NRIC:", lastFourNRIC);
+    
             // Placeholder validation logic
             if (plateNumber === "ABC1234" && lastFourNRIC === "1234") {
+                console.log("Validation successful, opening OTP modal");
                 openModal("otpModal");
             } else {
+                console.log("Validation failed, opening error modal");
                 openModal("errorModal");
             }
         }
-
+    
         function openModal(modalId) {
             document.getElementById(modalId).style.display = "flex";
         }
-
+    
         function closeModal() {
             document.querySelectorAll(".modal").forEach(modal => modal.style.display = "none");
             
