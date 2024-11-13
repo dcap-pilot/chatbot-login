@@ -209,11 +209,11 @@
             let plateNumber = document.getElementById("plateNumber").value.trim().toUpperCase();
             let lastFourNRIC = document.getElementById("lastFourNRIC").value.trim();
     
-            // Debugging: log the values
+            // Debugging: log the values for clarity
             console.log("Plate Number:", plateNumber);
             console.log("Last Four NRIC:", lastFourNRIC);
     
-            // Placeholder validation logic
+            // Placeholder validation logic (comparing uppercase `plateNumber` to the correct value)
             if (plateNumber === "ABC1234" && lastFourNRIC === "1234") {
                 console.log("Validation successful, opening OTP modal");
                 openModal("otpModal");
