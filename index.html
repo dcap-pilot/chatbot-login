@@ -75,12 +75,41 @@
             border-radius: 10px;
             text-align: center;
             cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition effect */
+        }
+
+        /* Resend button style */
+        .resend-button {
+            width: 100%;
+            background-color: rgb(201, 210, 227);
+            color: black;
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Ensure grey background when disabled */
+        .resend-button:disabled {
+            background-color: rgba(201, 210, 227, 0.5) !important; /* Faded grey color */
+            color: rgba(0, 0, 0, 0.5) !important; /* Faded text color */
+            cursor: not-allowed;
         }
 
         /* Change border color of button when focused */
         .submit-button:focus {
             outline: none;
             border-color: rgb(94, 148, 252);
+        }
+
+        /* Disabled button style with faded background */
+        .submit-button:disabled,
+        .close-button:disabled {
+            background-color: rgba(31, 107, 255, 0.5); /* Faded color */
+            border-color: rgba(31, 107, 255, 0.5); /* Faded border */
+            cursor: not-allowed; /* Change cursor to indicate disabled state */
         }
 
         .welcome-text {
@@ -189,9 +218,12 @@
     <div class="modal" id="otpModal">
         <div class="modal-content">
             <h5>Masukkan OTP</h5>
-            <p>Sila masukkan kod OTP yang dihantar ke WhatsApp anda.</p>
-            <input type="text" placeholder="Masukkan OTP" class="input-field" maxlength="6">
-            <button class="close-button" onclick="closeModal()">Hantar OTP</button>
+            <p>Sila masukkan kod OTP yang dihantar ke nombor WhatsApp anda.</p>
+            <input type="text" id="otpInput" placeholder="Masukkan OTP" class="input-field" maxlength="6" oninput="checkOTPInput()">
+            <button id="otpSubmitButton" class="close-button" onclick="submitOTP()" disabled>Sahkan</button>
+            
+            <!-- Resend OTP button with countdown -->
+            <button id="resendButton" class="close-button resend-button" onclick="resendOTP()" disabled>Hantar semula OTP (60 saat)</button>
         </div>
     </div>
 
@@ -205,18 +237,19 @@
     </div>
 
     <script>
+        let countdownInterval;
+    
         function validateInfo() {
             let plateNumber = document.getElementById("plateNumber").value.trim().toUpperCase();
             let lastFourNRIC = document.getElementById("lastFourNRIC").value.trim();
     
-            // Debugging: log the values for clarity
             console.log("Plate Number:", plateNumber);
             console.log("Last Four NRIC:", lastFourNRIC);
     
-            // Placeholder validation logic (comparing uppercase `plateNumber` to the correct value)
             if (plateNumber === "ABC1234" && lastFourNRIC === "1234") {
                 console.log("Validation successful, opening OTP modal");
                 openModal("otpModal");
+                startCountdown();
             } else {
                 console.log("Validation failed, opening error modal");
                 openModal("errorModal");
@@ -229,10 +262,56 @@
     
         function closeModal() {
             document.querySelectorAll(".modal").forEach(modal => modal.style.display = "none");
-            
-            // Clear input fields on modal close to ensure fresh validation on each attempt
+    
             document.getElementById("plateNumber").value = "";
             document.getElementById("lastFourNRIC").value = "";
+            document.getElementById("otpInput").value = "";  
+            document.getElementById("otpSubmitButton").disabled = true;
+            resetCountdown();
+        }
+    
+        function checkOTPInput() {
+            const otpInput = document.getElementById("otpInput").value;
+            const otpSubmitButton = document.getElementById("otpSubmitButton");
+    
+            otpSubmitButton.disabled = otpInput.length !== 6;
+        }
+    
+        function startCountdown() {
+            let timeLeft = 60;
+            const resendButton = document.getElementById("resendButton");
+            resendButton.disabled = true;
+            resendButton.textContent = `Hantar semula OTP (${timeLeft} saat)`;
+    
+            countdownInterval = setInterval(() => {
+                timeLeft -= 1;
+                resendButton.textContent = `Hantar semula OTP (${timeLeft} saat)`;
+    
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    resendButton.disabled = false;
+                    resendButton.textContent = "Hantar semula OTP";
+                }
+            }, 1000);
+        }
+    
+        function resetCountdown() {
+            clearInterval(countdownInterval);
+            const resendButton = document.getElementById("resendButton");
+            resendButton.textContent = "Hantar semula OTP (60 saat)";
+            resendButton.disabled = true;
+        }
+    
+        function resendOTP() {
+            console.log("Resending OTP...");
+            document.getElementById("otpInput").value = ""; // Clear OTP input
+            document.getElementById("otpSubmitButton").disabled = true; // Disable submit until new OTP entered
+            startCountdown(); // Restart countdown
+        }
+    
+        function submitOTP() {
+            console.log("Submitting OTP...");
+            closeModal(); // Close the modal after OTP submission
         }
     </script>
 </body>
